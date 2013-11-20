@@ -12,6 +12,7 @@ import static org.junit.Assert.fail;
 
 import com.rushteamc.lib.SharedEventBus.SharedEventBus;
 import com.rushteamc.lib.SharedEventBus.Subscribe;
+import com.rushteamc.lib.SharedEventBus.Secure.SecureEvent;
 
 public class BasicTest
 {
@@ -49,6 +50,9 @@ public class BasicTest
 
 		log.info("Starting basic test 3...");
 		basicTest3();
+
+		log.info("Starting basic test 4...");
+		basicTest4();
 	}
 	
 	public void basicTest1()
@@ -159,7 +163,7 @@ public class BasicTest
 		});
 		eventbus3.addHandler(handler3);
 		
-		log.info("waiting 100ms to give eventbus 3 time to establish connection with event bus 1...");
+		log.info("waiting 100ms to give eventbus 3 time to establish connection with event bus 1 and 2...");
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e1) { }
@@ -221,6 +225,54 @@ public class BasicTest
 		}
 	}
 	
+	public void basicTest4()
+	{
+		log.info("Using eventbus 2 and 3");
+		
+		log.info("Recreating eventbus 1 using localhost:8081");
+		eventbus1 = new SharedEventBus(inetSocketAddress);
+		eventbus1.addHandler(handler1);
+		
+		log.info("waiting 100ms to give eventbus 1 time to establish connection with event bus 2 and 3...");
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) { }
+		
+		log.info("Adding event 1 to group testGroup using password myPass");
+		eventbus1.addGroup("testGroup", "myPass");
+		log.info("Adding event 2 to group testGroup");
+		eventbus2.addGroup("testGroup", "myPass");
+		
+		handler3.setEventGotCallback(new EventGotCallback() {
+			@Override
+			public void onEventGot(handler h)
+			{
+				log.log(Level.SEVERE, "Did receive myEvent while not added to the proper group!");
+				fail("Did receive myEvent while not added to the proper group!");
+			}
+		});
+		
+		log.info("Sending myEvent on eventbus 1...");
+		continueCounter = 0;
+		eventbus1.fire(new SecureEvent("testGroup", new myEvent("myEvent event on eventbus 1 for group testGroup")));
+		
+		for(int i = 0; i < 1000 ; i++)
+		{
+			if(continueCounter == 2)
+				break;
+			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) { }
+		}
+		
+		if(continueCounter != 2)
+		{
+			log.log(Level.SEVERE, "Did not receive event in time! (waited  sec.)");
+			fail("Did not receive event in time! (waited  sec.)");
+		}
+	}
+	
 	public class handler
 	{
 		private final String name;
@@ -235,6 +287,13 @@ public class BasicTest
 		public void onStringEvent(String event)
 		{
 			log.info("Handler " + name + " got String event: " + event);
+			callback.onEventGot(this);
+		}
+		
+		@Subscribe
+		public void onStringEvent(String group, myEvent event)
+		{
+			log.info("Handler " + name + " got myEvent \"" + event + "\" from group " + group);
 			callback.onEventGot(this);
 		}
 		
