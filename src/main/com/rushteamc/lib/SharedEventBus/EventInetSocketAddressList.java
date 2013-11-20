@@ -3,6 +3,7 @@ package com.rushteamc.lib.SharedEventBus;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
 
+@SuppressWarnings("serial")
 public class EventInetSocketAddressList implements Serializable
 {
 	private final InetSocketAddress[] socketList;

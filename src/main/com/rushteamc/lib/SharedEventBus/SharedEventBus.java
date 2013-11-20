@@ -24,8 +24,8 @@ public class SharedEventBus
 	private final Communicator communicator;
 	private final ConcurrentLinkedQueue<Serializable> eventSendQueue = new ConcurrentLinkedQueue<Serializable>();
 	private final ConcurrentLinkedQueue<Serializable> eventQueue = new ConcurrentLinkedQueue<Serializable>();
-	private final Thread senderThread;
-	private final Thread handlerThread;
+	private final StoppableThread senderThread;
+	private final StoppableThread handlerThread;
 
 	private final List<Object> handlers = new LinkedList<Object>();
 	private final Map<Class<?>, List<HandlerCallList>> eventHandlerMethods = new HashMap<Class<?>, List<HandlerCallList>>();
@@ -192,6 +192,29 @@ public class SharedEventBus
 	
 	public InetSocketAddress[] getAddressList() {
 		return addressList;
+	}
+	
+	public void close()
+	{
+		close(false);
+	}
+	
+	public void close(boolean blocking)
+	{
+		senderThread.running = false;
+		handlerThread.running = false;
+		
+		communicator.close(blocking);
+		
+		if(blocking)
+		{
+			try {
+				senderThread.join();
+			} catch (InterruptedException e1) { }
+			try {
+				handlerThread.join();
+			} catch (InterruptedException e) { }
+		}
 	}
 
 	private class HandlerCallList

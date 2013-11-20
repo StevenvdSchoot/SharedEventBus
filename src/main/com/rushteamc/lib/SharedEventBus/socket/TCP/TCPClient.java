@@ -27,7 +27,6 @@ public class TCPClient extends Thread
 		// TODO: Detect if server actually is SharedEventBus server.
 		
 		start();
-		System.out.println("Opened client.");
 	}
 
 	public TCPClient(Socket socket) throws IOException
@@ -35,7 +34,6 @@ public class TCPClient extends Thread
 		this.socket = socket;
 		outputStream = new ObjectOutputStream(socket.getOutputStream());
 		start();
-		System.out.println("Opened client.");
 	}
 	
 	public void addTCPClientDisconnectHandler(TCPClientDisconnect handler)
@@ -76,7 +74,6 @@ public class TCPClient extends Thread
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Closed client.");
 		}
 	}
 	
@@ -115,13 +112,11 @@ public class TCPClient extends Thread
 		closeSocket();
 	}
 	
-	public void expire()
-	{
-		running = false;
-	}
-	
 	public void sendEvent(Serializable event)
 	{
+		if(!running)
+			return;
+		
 		try {
 			outputStream.writeObject(event);
 		} catch (IOException e) {
@@ -143,5 +138,23 @@ public class TCPClient extends Thread
 	public int getPort()
 	{
 		return socket.getPort();
+	}
+	
+	public void close()
+	{
+		close(false);
+	}
+	
+	public void close(boolean blocking)
+	{
+		running = false;
+		try {
+			socket.close();
+		} catch (IOException e) { }
+		
+		if(blocking)
+			try {
+				join();
+			} catch (InterruptedException e) { }
 	}
 }

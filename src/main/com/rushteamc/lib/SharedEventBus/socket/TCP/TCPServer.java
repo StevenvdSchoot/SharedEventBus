@@ -2,15 +2,12 @@ package com.rushteamc.lib.SharedEventBus.socket.TCP;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import com.rushteamc.lib.SharedEventBus.SharedEventBus;
 
 public class TCPServer extends Thread
 {
@@ -42,7 +39,6 @@ public class TCPServer extends Thread
 		{
 			try {
 				Socket clientSocket = socket.accept();
-				System.out.println("new server client!");
 				final TCPClient client = new TCPClient(clientSocket);
 				client.addTCPClientDisconnectHandler(new TCPClientDisconnect(){
 					@Override
@@ -63,11 +59,14 @@ public class TCPServer extends Thread
 				});
 				clientList.add(client);
 			} catch (IOException e) {
-				e.printStackTrace();
-				try {
-					sleep(100);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
+				if(running)
+				{
+					e.printStackTrace();
+					try {
+						sleep(100);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		}
@@ -82,5 +81,27 @@ public class TCPServer extends Thread
 	{
 		for( TCPClient client : clientList )
 			client.sendEvent(event);
+	}
+	
+	public void close()
+	{
+		close(false);
+	}
+	
+	public void close(boolean blocking)
+	{
+		running = false;
+		try {
+			socket.close();
+		} catch (IOException e) { }
+		
+		for( TCPClient client : clientList )
+			client.close(false);
+
+		if(blocking)
+			for( TCPClient client : clientList )
+				try {
+					client.join();
+				} catch (InterruptedException e) { }
 	}
 }

@@ -1,7 +1,6 @@
 package com.rushteamc.lib.SharedEventBus.socket;
 
 import java.io.Serializable;
-import java.net.InetSocketAddress;
 
 public interface Communicator
 {
@@ -10,4 +9,7 @@ public interface Communicator
 	public void subscribeReceivedEventCallback(ReceivedEventCallback callback);
 
 	public void shareEvent(Serializable event);
+	
+	public void close();
+	public void close(boolean blocking);
 }

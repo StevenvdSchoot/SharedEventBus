@@ -69,7 +69,6 @@ public class TCPCommunicator implements Communicator
 	
 	private void newClient(InetSocketAddress address) throws IOException
 	{
-		System.out.println("newClient call!");
 		client = new TCPClient(address);
 		client.addTCPEventHandler(new TCPEvent() {
 			@Override
@@ -91,7 +90,6 @@ public class TCPCommunicator implements Communicator
 				{
 					try {
 						ServerSocket socket = new ServerSocket(client.getPort());
-						System.out.println("Created a server!");
 						server = new TCPServer(socket);
 						server.addTCPEventHandler(new TCPEvent() {
 							@Override
@@ -150,5 +148,27 @@ public class TCPCommunicator implements Communicator
 		
 		if( client != null )
 			client.sendEvent(event);
+	}
+
+	@Override
+	public void close()
+	{
+		close(false);
+	}
+
+	@Override
+	public void close(boolean blocking)
+	{
+		if(client != null)
+		{
+			client.close(true);
+			client = null;
+		}
+		
+		if(server != null)
+		{
+			server.close(true);
+			server = null;
+		}
 	}
 }
