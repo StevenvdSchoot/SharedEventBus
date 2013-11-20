@@ -63,7 +63,7 @@ public class Main
 	public class Handler2
 	{
 		@Subscribe
-		public void onString(String str)
+		public void onString(String group, String str)
 		{
 			System.out.println("Handler 2 got string: " + str);
 		}

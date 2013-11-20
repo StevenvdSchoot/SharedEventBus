@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,7 +35,8 @@ public class SharedEventBus
 
 	private final List<Object> handlers = new LinkedList<Object>();
 	private final Map<Class<?>, List<HandlerCallList>> eventHandlerMethods = new HashMap<Class<?>, List<HandlerCallList>>();
-
+	private final SecureEventSerializer secureEventSerializer = new SecureEventSerializer();
+	
 	public enum Protocol
 	{
 		UDP,
@@ -91,7 +94,7 @@ public class SharedEventBus
 				try {
 					if(event instanceof SecureEventMessage)
 					{
-							event = SecureEventSerializer.deserialize((SecureEventMessage) event);
+							event = secureEventSerializer.deserialize((SecureEventMessage) event);
 					}
 					eventQueue.add(event);
 				} catch (ClassCastException e) {
@@ -130,14 +133,24 @@ public class SharedEventBus
 				{
 					Serializable event = eventQueue.poll();
 					if(event == null)
+					{
 						try {
 							sleep(100);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+					}
 					else
-						handleEvent(event);
+					{
+						if(event instanceof SecureEvent)
+						{
+							SecureEvent secureEvent = (SecureEvent) event;
+							handleEvent(secureEvent.getGroup(), secureEvent.getEvent());
+						}
+						else
+							handleEvent(null, event);
+					}
 				}
 			}
 		};
@@ -150,7 +163,7 @@ public class SharedEventBus
 		if(sendEvent instanceof SecureEvent)
 		{
 			try {
-				sendEvent = SecureEventSerializer.serialize((SecureEvent) sendEvent);
+				sendEvent = secureEventSerializer.serialize((SecureEvent) sendEvent);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -174,11 +187,21 @@ public class SharedEventBus
 			if(method.isAnnotationPresent(Subscribe.class))
 			{
 				Class<?>[] parameters = method.getParameterTypes();
-				if(parameters.length != 1)
+				Class<?> parameter;
+				if(parameters.length == 1)
 				{
-					throw new IllegalArgumentException("@Subscribe presented to method " + method.getName() + " with multiple paramter.");
+					parameter = parameters[0];
 				}
-				Class<?> parameter = parameters[0];
+				else if(parameters.length == 2)
+				{
+					if(!parameters[0].isAssignableFrom(String.class))
+						throw new IllegalArgumentException("@Subscribe presented to method " + method.getName() + " with two paramters: parameter one has to be of final type String");
+					parameter = parameters[1];
+				}
+				else
+				{
+					throw new IllegalArgumentException("@Subscribe presented to method " + method.getName() + " with an invalid amount of paramter.");
+				}
 				List<Method> list = map.get(parameter);
 				if(list == null)
 					list = new LinkedList<Method>();
@@ -202,7 +225,7 @@ public class SharedEventBus
 		}
 	}
 	
-	private void handleEvent(Serializable event)
+	private void handleEvent(String group, Serializable event)
 	{
 		Class<? extends Serializable> cls = event.getClass();
 		List<HandlerCallList> list = eventHandlerMethods.get(cls);
@@ -212,7 +235,7 @@ public class SharedEventBus
 		
 		for( HandlerCallList handlerCallList : list )
 		{
-			handlerCallList.call(event);
+			handlerCallList.call(group, event);
 		}
 	}
 	
@@ -231,12 +254,15 @@ public class SharedEventBus
 			this.methods = methods;
 		}
 		
-		public void call(Object event)
+		public void call(String group, Object event)
 		{
 			for( Method method : methods )
 			{
 				try {
-					method.invoke(obj, event);
+					if(method.getParameterTypes().length == 1)
+						method.invoke(obj, event);
+					else
+						method.invoke(obj, group, event);
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
 				} catch (Throwable e) {
@@ -244,6 +270,29 @@ public class SharedEventBus
 				}
 			}
 		}
+	}
+	
+	public void addGroup(String group, String password)
+	{
+		addGroup(group, password.toCharArray());
+	}
+	
+	public boolean addGroup(String group, char[] password)
+	{
+		try {
+			secureEventSerializer.addGroup(group, password);
+			return true;
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public void removeGroup(String group)
+	{
+		secureEventSerializer.removeGroup(group);
 	}
 	
 }
