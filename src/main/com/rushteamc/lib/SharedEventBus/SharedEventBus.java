@@ -1,5 +1,6 @@
 package com.rushteamc.lib.SharedEventBus;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,6 +15,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.rushteamc.lib.SharedEventBus.Secure.SecureEvent;
+import com.rushteamc.lib.SharedEventBus.Secure.SecureEventMessage;
+import com.rushteamc.lib.SharedEventBus.Secure.SecureEventSerializer;
 import com.rushteamc.lib.SharedEventBus.socket.Communicator;
 import com.rushteamc.lib.SharedEventBus.socket.ReceivedEventCallback;
 import com.rushteamc.lib.SharedEventBus.socket.TCP.TCPCommunicator;
@@ -84,7 +88,19 @@ public class SharedEventBus
 			@Override
 			public void onReceivedEvent(Serializable event)
 			{
-				eventQueue.add(event);
+				try {
+					if(event instanceof SecureEventMessage)
+					{
+							event = SecureEventSerializer.deserialize((SecureEventMessage) event);
+					}
+					eventQueue.add(event);
+				} catch (ClassCastException e) {
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -130,7 +146,17 @@ public class SharedEventBus
 	
 	public void fire(Serializable event)
 	{
-		eventSendQueue.add(event);
+		Serializable sendEvent = event;
+		if(sendEvent instanceof SecureEvent)
+		{
+			try {
+				sendEvent = SecureEventSerializer.serialize((SecureEvent) sendEvent);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		eventSendQueue.add(sendEvent);
 		eventQueue.add(event);
 	}
 	
