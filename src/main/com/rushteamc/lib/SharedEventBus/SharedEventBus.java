@@ -97,6 +97,8 @@ public class SharedEventBus
 							event = secureEventSerializer.deserialize((SecureEventMessage) event);
 					}
 					eventQueue.add(event);
+				} catch (IllegalArgumentException e) {
+					;
 				} catch (ClassCastException e) {
 					e.printStackTrace();
 				} catch (ClassNotFoundException e) {
@@ -155,6 +157,8 @@ public class SharedEventBus
 			}
 		};
 		handlerThread.start();
+		
+		secureEventSerializer.setup();
 	}
 	
 	public void fire(Serializable event)
