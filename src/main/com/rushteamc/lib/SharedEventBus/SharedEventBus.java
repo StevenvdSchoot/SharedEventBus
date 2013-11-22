@@ -23,6 +23,7 @@ import com.rushteamc.lib.SharedEventBus.Secure.SecureEventSerializer;
 import com.rushteamc.lib.SharedEventBus.socket.Communicator;
 import com.rushteamc.lib.SharedEventBus.socket.ReceivedEventCallback;
 import com.rushteamc.lib.SharedEventBus.socket.TCP.TCPCommunicator;
+import com.rushteamc.lib.SharedEventBus.socket.UDP.UDPCommunicator;
 
 public class SharedEventBus
 {
@@ -57,22 +58,25 @@ public class SharedEventBus
 	{
 		this(adressList.toArray(new InetSocketAddress[adressList.size()]));
 	}
-	
+
 	public SharedEventBus(InetSocketAddress[] adressList)
 	{
 		this(adressList, Protocol.TCP);
 	}
 	
+	@Deprecated
 	public SharedEventBus(Set<InetSocketAddress> adressList, Protocol protocol)
 	{
 		this(adressList.toArray(new InetSocketAddress[adressList.size()]), protocol);
 	}
-	
+
+	@Deprecated
 	public SharedEventBus(List<InetSocketAddress> adressList, Protocol protocol)
 	{
 		this(adressList.toArray(new InetSocketAddress[adressList.size()]), protocol);
 	}
-	
+
+	@Deprecated
 	public SharedEventBus(InetSocketAddress[] addressList, Protocol protocol)
 	{
 		if(addressList == null)
@@ -85,7 +89,7 @@ public class SharedEventBus
 		}
 		
 		this.addressList = addressList;
-		this.communicator = (protocol == Protocol.UDP)?( null ):( new TCPCommunicator(addressList) );
+		this.communicator = (protocol == Protocol.UDP)?( new UDPCommunicator(addressList) ):( new TCPCommunicator(addressList) );
 		
 		communicator.subscribeReceivedEventCallback(new ReceivedEventCallback() {
 			@Override

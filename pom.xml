@@ -7,7 +7,7 @@
   <!-- The Basics -->
   <groupId>com.rushteamc.lib</groupId>
   <artifactId>SharedEventBus</artifactId>
-  <version>0.1</version>
+  <version>0.1-RC1</version>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
