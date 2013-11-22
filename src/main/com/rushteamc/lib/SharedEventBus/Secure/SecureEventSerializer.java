@@ -28,7 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class SecureEventSerializer
 {
-	private static final int KEYSIZE = 128; // If you are American you are allowed to upgrade this to 256 :(
+	private static final int KEYSIZE = 128; // If you are American you are allowed to upgrade this to 256, in order countries Java block this :(
 	private final Map<String, SecretKey> keyRing = new HashMap<String, SecretKey>();
 	private static final byte[] salt;
 	

@@ -53,6 +53,9 @@ public class BasicTest
 
 		log.info("Starting basic test 4...");
 		basicTest4();
+
+		log.info("Starting basic test 4...");
+		basicTest5();
 	}
 	
 	public void basicTest1()
@@ -193,7 +196,7 @@ public class BasicTest
 		}
 		
 		/*
-		 * Simulating shutdown / crash of eventbus 1
+		 * Simulating shutdown / crash of event bus 1
 		 */
 
 		log.info("Simulating shutdown / crash of eventbus 1");
@@ -242,6 +245,8 @@ public class BasicTest
 		eventbus1.addGroup("testGroup", "myPass");
 		log.info("Adding event 2 to group testGroup");
 		eventbus2.addGroup("testGroup", "myPass");
+		log.info("Adding event 3 to group anotherGroup using password anotherPass");
+		eventbus3.addGroup("anotherGroup", "anotherPass");
 		
 		handler3.setEventGotCallback(new EventGotCallback() {
 			@Override
@@ -255,7 +260,53 @@ public class BasicTest
 		log.info("Sending myEvent on eventbus 1...");
 		continueCounter = 0;
 		eventbus1.fire(new SecureEvent("testGroup", new myEvent("myEvent event on eventbus 1 for group testGroup")));
+
+		for(int i = 0; i < 1000 ; i++)
+		{
+			if(continueCounter == 2)
+				break;
+			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) { }
+		}
 		
+		if(continueCounter != 2)
+		{
+			log.log(Level.SEVERE, "Did not receive event in time! (waited  sec.)");
+			fail("Did not receive event in time! (waited  sec.)");
+		}
+	}
+	
+	public void basicTest5()
+	{
+		log.info("Using eventbus 1, 2 and 3");
+		
+		log.info("Removing event 1 to group testGroup");
+		eventbus1.removeGroup("testGroup");
+		log.info("Adding event 3 to group testGroup using password myPass");
+		eventbus3.addGroup("testGroup", "myPass");
+		
+		handler1.setEventGotCallback(new EventGotCallback() {
+			@Override
+			public void onEventGot(handler h)
+			{
+				log.log(Level.SEVERE, "Did receive myEvent while not added to the proper group!");
+				fail("Did receive myEvent while not added to the proper group!");
+			}
+		});
+		handler3.setEventGotCallback(new EventGotCallback() {
+			@Override
+			public void onEventGot(handler h)
+			{
+				continueCounter++;
+			}
+		});
+		
+		log.info("Sending myEvent on eventbus 2...");
+		continueCounter = 0;
+		eventbus2.fire(new SecureEvent("testGroup", new myEvent("myEvent event on eventbus 1 for group testGroup")));
+
 		for(int i = 0; i < 1000 ; i++)
 		{
 			if(continueCounter == 2)
