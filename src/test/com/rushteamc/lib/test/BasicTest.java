@@ -2,6 +2,7 @@ package com.rushteamc.lib.test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,7 +13,6 @@ import static org.junit.Assert.fail;
 
 import com.rushteamc.lib.SharedEventBus.SharedEventBus;
 import com.rushteamc.lib.SharedEventBus.Subscribe;
-import com.rushteamc.lib.SharedEventBus.Secure.SecureEvent;
 
 public class BasicTest
 {
@@ -241,25 +241,35 @@ public class BasicTest
 			Thread.sleep(100);
 		} catch (InterruptedException e1) { }
 		
-		log.info("Adding event 1 to group testGroup using password myPass");
+		log.info("Adding event bus 1 to group testGroup using password myPass");
 		eventbus1.addGroup("testGroup", "myPass");
-		log.info("Adding event 2 to group testGroup");
+		log.info("Adding event bus 2 to group testGroup");
 		eventbus2.addGroup("testGroup", "myPass");
-		log.info("Adding event 3 to group anotherGroup using password anotherPass");
+		log.info("Adding event bus 3 to group anotherGroup using password anotherPass");
 		eventbus3.addGroup("anotherGroup", "anotherPass");
 		
 		handler3.setEventGotCallback(new EventGotCallback() {
 			@Override
 			public void onEventGot(handler h)
 			{
-				log.log(Level.SEVERE, "Did receive myEvent while not added to the proper group!");
-				fail("Did receive myEvent while not added to the proper group!");
+				StringBuilder stringBuilder = new StringBuilder();
+				Set<String> groups = eventbus3.getGroups();
+				for( String group : groups )
+				{
+					stringBuilder.append(group);
+					stringBuilder.append(", ");
+				}
+				stringBuilder.delete(stringBuilder.length()-2, stringBuilder.length());
+				String groupString = stringBuilder.toString();
+				
+				log.log(Level.SEVERE, "Handler 3 did receive myEvent while not added to the proper group!\nGroup list: " + groupString);
+				fail("Handler 3 did receive myEvent while not added to the proper group!");
 			}
 		});
 		
 		log.info("Sending myEvent on eventbus 1...");
 		continueCounter = 0;
-		eventbus1.fire(new SecureEvent("testGroup", new myEvent("myEvent event on eventbus 1 for group testGroup")));
+		eventbus1.postGroupEvent("testGroup", new myEvent("myEvent event on eventbus 1 for group testGroup"));
 
 		for(int i = 0; i < 1000 ; i++)
 		{
@@ -270,6 +280,10 @@ public class BasicTest
 				Thread.sleep(10);
 			} catch (InterruptedException e) { }
 		}
+
+		try {
+			Thread.sleep(1000); // Give event bus 3 some time to receive the event...
+		} catch (InterruptedException e) { }
 		
 		if(continueCounter != 2)
 		{
@@ -282,17 +296,27 @@ public class BasicTest
 	{
 		log.info("Using eventbus 1, 2 and 3");
 		
-		log.info("Removing event 1 to group testGroup");
+		log.info("Removing event bus 1 to group testGroup");
 		eventbus1.removeGroup("testGroup");
-		log.info("Adding event 3 to group testGroup using password myPass");
+		log.info("Adding event bus 3 to group testGroup using password myPass");
 		eventbus3.addGroup("testGroup", "myPass");
 		
 		handler1.setEventGotCallback(new EventGotCallback() {
 			@Override
 			public void onEventGot(handler h)
 			{
-				log.log(Level.SEVERE, "Did receive myEvent while not added to the proper group!");
-				fail("Did receive myEvent while not added to the proper group!");
+				StringBuilder stringBuilder = new StringBuilder();
+				Set<String> groups = eventbus1.getGroups();
+				for( String group : groups )
+				{
+					stringBuilder.append(group);
+					stringBuilder.append(", ");
+				}
+				stringBuilder.delete(stringBuilder.length()-2, stringBuilder.length());
+				String groupString = stringBuilder.toString();
+				
+				log.log(Level.SEVERE, "Handler 1 did receive myEvent while not added to the proper group!\nGroup list: " + groupString);
+				fail("Handler 1 did receive myEvent while not added to the proper group!");
 			}
 		});
 		handler3.setEventGotCallback(new EventGotCallback() {
@@ -305,7 +329,7 @@ public class BasicTest
 		
 		log.info("Sending myEvent on eventbus 2...");
 		continueCounter = 0;
-		eventbus2.fire(new SecureEvent("testGroup", new myEvent("myEvent event on eventbus 1 for group testGroup")));
+		eventbus2.postGroupEvent("testGroup", new myEvent("myEvent event on eventbus 1 for group testGroup"));
 
 		for(int i = 0; i < 1000 ; i++)
 		{
@@ -316,6 +340,10 @@ public class BasicTest
 				Thread.sleep(10);
 			} catch (InterruptedException e) { }
 		}
+
+		try {
+			Thread.sleep(1000); // Give event bus 1 some time to receive the event...
+		} catch (InterruptedException e) { }
 		
 		if(continueCounter != 2)
 		{

@@ -15,6 +15,7 @@ import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.KeySpec;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -73,11 +74,14 @@ public class SecureEventSerializer
 	
 	public SecureEventMessage serialize(SecureEvent secureEvent) throws IOException
 	{
-		SecretKey key = keyRing.get(secureEvent.getGroup());
+		return serialize(secureEvent.getGroup(), secureEvent.getEvent());
+	}
+	
+	public SecureEventMessage serialize(String group, Serializable event) throws IOException
+	{
+		SecretKey key = keyRing.get(group);
 		if(key == null)
 			throw new IllegalArgumentException("Could not find given group.");
-		
-		Serializable event = secureEvent.getEvent();
 		
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
@@ -88,7 +92,7 @@ public class SecureEventSerializer
 		objectStream.close();
 		byteStream.close();
 		
-		return encrypt(secureEvent.getGroup(), key, output);
+		return encrypt(group, key, output);
 	}
 
 	public SecureEvent deserialize(SecureEventMessage secureEventMessage) throws IllegalArgumentException, ClassCastException, IOException, ClassNotFoundException
@@ -208,8 +212,13 @@ public class SecureEventSerializer
 		keyRing.put(group, secretKey);
 	}
 	
-	public void removeGroup(String group)
+	public boolean removeGroup(String group)
 	{
-		keyRing.remove(group);
+		return (keyRing.remove(group) != null);
+	}
+
+	public Set<String> getGroups()
+	{
+		return keyRing.keySet();
 	}
 }

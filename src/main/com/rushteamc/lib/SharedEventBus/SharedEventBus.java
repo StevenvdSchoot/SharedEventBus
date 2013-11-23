@@ -98,7 +98,7 @@ public class SharedEventBus
 				try {
 					if(event instanceof SecureEventMessage)
 					{
-							event = secureEventSerializer.deserialize((SecureEventMessage) event);
+						event = secureEventSerializer.deserialize((SecureEventMessage) event);
 					}
 					eventQueue.add(event);
 				} catch (IllegalArgumentException e) {
@@ -177,6 +177,24 @@ public class SharedEventBus
 			}
 		}
 		
+		eventSendQueue.add(sendEvent);
+		eventQueue.add(event);
+	}
+	
+	public void postEvent(Serializable event)
+	{
+		eventSendQueue.add(event);
+		eventQueue.add(event);
+	}
+	
+	public void postGroupEvent(String group, Serializable event)
+	{
+		SecureEventMessage sendEvent = null;
+		try {
+			sendEvent = secureEventSerializer.serialize(group, event);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		eventSendQueue.add(sendEvent);
 		eventQueue.add(event);
 	}
@@ -321,9 +339,14 @@ public class SharedEventBus
 		return false;
 	}
 	
-	public void removeGroup(String group)
+	public boolean removeGroup(String group)
 	{
-		secureEventSerializer.removeGroup(group);
+		return secureEventSerializer.removeGroup(group);
+	}
+	
+	public Set<String> getGroups()
+	{
+		return secureEventSerializer.getGroups();
 	}
 	
 }
