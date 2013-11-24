@@ -175,13 +175,22 @@ public class BasicTest
 		 * Initial event fire test
 		 */
 		
-		log.info("Firing String event on eventbus 1...");
+		handler1.setEventGotCallback(new EventGotCallback() {
+			@Override
+			public void onEventGot(handler h)
+			{
+				log.log(Level.SEVERE, "Received event marked as external only internaly!");
+				fail("Received event marked as external only internaly!");
+			}
+		});
+		
+		log.info("Firing extern String event on eventbus 1...");
 		continueCounter = 0;
-		eventbus1.fire("String event on eventbus 1");
+		eventbus1.fire("String event on eventbus 1", false);
 		
 		for(int i = 0; i < 1000 ; i++)
 		{
-			if(continueCounter == 3)
+			if(continueCounter == 2)
 				break;
 			
 			try {
@@ -189,7 +198,7 @@ public class BasicTest
 			} catch (InterruptedException e) { }
 		}
 		
-		if(continueCounter != 3)
+		if(continueCounter != 2)
 		{
 			log.log(Level.SEVERE, "Did not receive event in time! (waited  sec.)");
 			fail("Did not receive event in time! (waited  sec.)");
@@ -234,6 +243,13 @@ public class BasicTest
 		
 		log.info("Recreating eventbus 1 using localhost:8081");
 		eventbus1 = new SharedEventBus(inetSocketAddress);
+		handler1.setEventGotCallback(new EventGotCallback() {
+			@Override
+			public void onEventGot(handler h)
+			{
+				continueCounter++;
+			}
+		});
 		eventbus1.addHandler(handler1);
 		
 		log.info("waiting 100ms to give eventbus 1 time to establish connection with event bus 2 and 3...");

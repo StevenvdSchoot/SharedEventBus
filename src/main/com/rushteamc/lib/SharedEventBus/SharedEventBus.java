@@ -164,8 +164,13 @@ public class SharedEventBus
 		
 		secureEventSerializer.setup();
 	}
-	
+
 	public void fire(Serializable event)
+	{
+		fire(event, true);
+	}
+
+	public void fire(Serializable event, boolean intern)
 	{
 		Serializable sendEvent = event;
 		if(sendEvent instanceof SecureEvent)
@@ -178,16 +183,30 @@ public class SharedEventBus
 		}
 		
 		eventSendQueue.add(sendEvent);
-		eventQueue.add(event);
+		
+		if(intern)
+			eventQueue.add(event);
 	}
 	
 	public void postEvent(Serializable event)
 	{
+		postEvent(event, true);
+	}
+	
+	public void postEvent(Serializable event, boolean intern)
+	{
 		eventSendQueue.add(event);
-		eventQueue.add(event);
+		
+		if(intern)
+			eventQueue.add(event);
 	}
 	
 	public void postGroupEvent(String group, Serializable event)
+	{
+		postGroupEvent(group, event, true);
+	}
+	
+	public void postGroupEvent(String group, Serializable event, boolean intern)
 	{
 		SecureEventMessage sendEvent = null;
 		try {
@@ -196,7 +215,9 @@ public class SharedEventBus
 			e.printStackTrace();
 		}
 		eventSendQueue.add(sendEvent);
-		eventQueue.add(event);
+		
+		if(intern)
+			eventQueue.add(new SecureEvent(group, event));
 	}
 	
 	public void addHandler(Object handler)
