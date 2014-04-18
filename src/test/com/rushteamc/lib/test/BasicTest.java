@@ -54,8 +54,11 @@ public class BasicTest
 		log.info("Starting basic test 4...");
 		basicTest4();
 
-		log.info("Starting basic test 4...");
+		log.info("Starting basic test 5...");
 		basicTest5();
+
+		log.info("Starting basic test 6...");
+		basicTest6();
 	}
 	
 	public void basicTest1()
@@ -368,6 +371,43 @@ public class BasicTest
 		}
 	}
 	
+	public void basicTest6()
+	{
+		log.info("Using eventbus 1 and 2");
+
+		handler1.setEventGotCallback(new EventGotCallback() {
+			@Override
+			public void onEventGot(handler h)
+			{
+				continueCounter++;
+			}
+		});
+
+		log.info("Sending myEventExtended on eventbus 1...");
+		continueCounter = 0;
+		eventbus1.postEvent(new AnotherEventExtended("myEventExtended event on eventbus 1"));
+
+		for(int i = 0; i < 1000 ; i++)
+		{
+			if(continueCounter == 3)
+				break;
+			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) { }
+		}
+
+		try {
+			Thread.sleep(1000); // Give event bus 1 some time to receive the event...
+		} catch (InterruptedException e) { }
+		
+		if(continueCounter != 3)
+		{
+			log.log(Level.SEVERE, "Did not receive event in time! (waited  sec.)");
+			fail("Did not receive event in time! (waited  sec.)");
+		}
+	}
+	
 	public class handler
 	{
 		private final String name;
@@ -389,6 +429,13 @@ public class BasicTest
 		public void onStringEvent(String group, myEvent event)
 		{
 			log.info("Handler " + name + " got myEvent \"" + event + "\" from group " + group);
+			callback.onEventGot(this);
+		}
+		
+		@Subscribe(instanceOf=true)
+		public void onInstanceOfAnotherEvent(String group, AnotherEvent event)
+		{
+			log.info("Handler " + name + " got instance of myEvent \"" + event + "\" from group " + group);
 			callback.onEventGot(this);
 		}
 		

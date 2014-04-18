@@ -102,9 +102,13 @@ public class TCPClient extends Thread
 				Serializable event = (Serializable)obj;
 				callTCPEventHandlers(event);
 			} catch (IOException e) {
-				// TODO: Better handle this event. It may indicate a broken connection. Try reconnect etc..
 				closeSocket();
 			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (ClassCastException e) {
+				e.printStackTrace();
+			} catch (Throwable e) { // Read object is known to be able to throw exceptions that are not documented (e.g. IllegalStateException)
+				System.err.print("Cought undocumented exception:");
 				e.printStackTrace();
 			}
 		}
@@ -120,7 +124,6 @@ public class TCPClient extends Thread
 		try {
 			outputStream.writeObject(event);
 		} catch (IOException e) {
-			// TODO: Better handle this event. It may indicate a broken connection.
 			e.printStackTrace();
 		}
 	}

@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139084</millis>
+  <sequence>0</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest</method>
+  <thread>1</thread>
+  <message>Starting basic test 1...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139101</millis>
+  <sequence>1</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest1</method>
+  <thread>1</thread>
+  <message>Creating eventbus 1</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139116</millis>
+  <sequence>2</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest1</method>
+  <thread>1</thread>
+  <message>Firing String event on eventbus 1...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139212</millis>
+  <sequence>3</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>10</thread>
+  <message>Handler 1 got String event: String event on eventbus 1</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139219</millis>
+  <sequence>4</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest</method>
+  <thread>1</thread>
+  <message>Starting basic test 2...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139222</millis>
+  <sequence>5</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest2</method>
+  <thread>1</thread>
+  <message>Recreating eventbus 1 using localhost:8081</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139259</millis>
+  <sequence>6</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest2</method>
+  <thread>1</thread>
+  <message>waiting 100ms to give eventbus 1 time to establish server...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139360</millis>
+  <sequence>7</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest2</method>
+  <thread>1</thread>
+  <message>Creating eventbus 2 using localhost:8081</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139374</millis>
+  <sequence>8</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest2</method>
+  <thread>1</thread>
+  <message>waiting 100ms to give eventbus 2 time to establish connection with event bus 1...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139476</millis>
+  <sequence>9</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest2</method>
+  <thread>1</thread>
+  <message>Firing String event on eventbus 1...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139557</millis>
+  <sequence>10</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>13</thread>
+  <message>Handler 1 got String event: String event on eventbus 1</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139574</millis>
+  <sequence>11</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>17</thread>
+  <message>Handler 2 got String event: String event on eventbus 1</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139581</millis>
+  <sequence>12</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest</method>
+  <thread>1</thread>
+  <message>Starting basic test 3...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139584</millis>
+  <sequence>13</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest3</method>
+  <thread>1</thread>
+  <message>Using eventbus 1 and 2</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139588</millis>
+  <sequence>14</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest3</method>
+  <thread>1</thread>
+  <message>Creating eventbus 3 using localhost:8081</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139592</millis>
+  <sequence>15</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest3</method>
+  <thread>1</thread>
+  <message>waiting 100ms to give eventbus 3 time to establish connection with event bus 1 and 2...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139695</millis>
+  <sequence>16</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest3</method>
+  <thread>1</thread>
+  <message>Firing extern String event on eventbus 1...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139777</millis>
+  <sequence>17</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>17</thread>
+  <message>Handler 2 got String event: String event on eventbus 1</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139792</millis>
+  <sequence>18</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>21</thread>
+  <message>Handler 3 got String event: String event on eventbus 1</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139797</millis>
+  <sequence>19</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest3</method>
+  <thread>1</thread>
+  <message>Simulating shutdown / crash of eventbus 1</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139868</millis>
+  <sequence>20</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest3</method>
+  <thread>1</thread>
+  <message>Firing String event on eventbus 2...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139881</millis>
+  <sequence>21</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>17</thread>
+  <message>Handler 2 got String event: String event on eventbus 2</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139895</millis>
+  <sequence>22</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>21</thread>
+  <message>Handler 3 got String event: String event on eventbus 2</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139901</millis>
+  <sequence>23</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest</method>
+  <thread>1</thread>
+  <message>Starting basic test 4...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139903</millis>
+  <sequence>24</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest4</method>
+  <thread>1</thread>
+  <message>Using eventbus 2 and 3</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139906</millis>
+  <sequence>25</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest4</method>
+  <thread>1</thread>
+  <message>Recreating eventbus 1 using localhost:8081</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:19</date>
+  <millis>1388877139913</millis>
+  <sequence>26</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest4</method>
+  <thread>1</thread>
+  <message>waiting 100ms to give eventbus 1 time to establish connection with event bus 2 and 3...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:20</date>
+  <millis>1388877140015</millis>
+  <sequence>27</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest4</method>
+  <thread>1</thread>
+  <message>Adding event bus 1 to group testGroup using password myPass</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:20</date>
+  <millis>1388877140571</millis>
+  <sequence>28</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest4</method>
+  <thread>1</thread>
+  <message>Adding event bus 2 to group testGroup</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:20</date>
+  <millis>1388877140687</millis>
+  <sequence>29</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest4</method>
+  <thread>1</thread>
+  <message>Adding event bus 3 to group anotherGroup using password anotherPass</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:20</date>
+  <millis>1388877140803</millis>
+  <sequence>30</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest4</method>
+  <thread>1</thread>
+  <message>Sending myEvent on eventbus 1...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:20</date>
+  <millis>1388877140913</millis>
+  <sequence>31</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>28</thread>
+  <message>Handler 1 got myEvent "myEvent event on eventbus 1 for group testGroup" from group testGroup</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:20</date>
+  <millis>1388877140985</millis>
+  <sequence>32</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>17</thread>
+  <message>Handler 2 got myEvent "myEvent event on eventbus 1 for group testGroup" from group testGroup</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:21</date>
+  <millis>1388877141996</millis>
+  <sequence>33</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest</method>
+  <thread>1</thread>
+  <message>Starting basic test 5...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:21</date>
+  <millis>1388877141999</millis>
+  <sequence>34</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest5</method>
+  <thread>1</thread>
+  <message>Using eventbus 1, 2 and 3</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:22</date>
+  <millis>1388877142002</millis>
+  <sequence>35</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest5</method>
+  <thread>1</thread>
+  <message>Removing event bus 1 to group testGroup</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:22</date>
+  <millis>1388877142005</millis>
+  <sequence>36</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest5</method>
+  <thread>1</thread>
+  <message>Adding event bus 3 to group testGroup using password myPass</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:22</date>
+  <millis>1388877142127</millis>
+  <sequence>37</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest5</method>
+  <thread>1</thread>
+  <message>Sending myEvent on eventbus 2...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:22</date>
+  <millis>1388877142190</millis>
+  <sequence>38</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>17</thread>
+  <message>Handler 2 got myEvent "myEvent event on eventbus 1 for group testGroup" from group testGroup</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:22</date>
+  <millis>1388877142202</millis>
+  <sequence>39</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onStringEvent</method>
+  <thread>21</thread>
+  <message>Handler 3 got myEvent "myEvent event on eventbus 1 for group testGroup" from group testGroup</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:23</date>
+  <millis>1388877143209</millis>
+  <sequence>40</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest</method>
+  <thread>1</thread>
+  <message>Starting basic test 6...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:23</date>
+  <millis>1388877143212</millis>
+  <sequence>41</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest6</method>
+  <thread>1</thread>
+  <message>Using eventbus 1 and 2</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:23</date>
+  <millis>1388877143216</millis>
+  <sequence>42</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest</class>
+  <method>basicTest6</method>
+  <thread>1</thread>
+  <message>Sending myEventExtended on eventbus 1...</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:23</date>
+  <millis>1388877143318</millis>
+  <sequence>43</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onInstanceOfAnotherEvent</method>
+  <thread>28</thread>
+  <message>Handler 1 got instance of myEvent "myEventExtended event on eventbus 1" from group null</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:23</date>
+  <millis>1388877143395</millis>
+  <sequence>44</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onInstanceOfAnotherEvent</method>
+  <thread>17</thread>
+  <message>Handler 2 got instance of myEvent "myEventExtended event on eventbus 1" from group null</message>
+</record>
+<record>
+  <date>2014-01-05T00:12:23</date>
+  <millis>1388877143406</millis>
+  <sequence>45</sequence>
+  <logger>com.rushteamc.lib.test.BasicTest</logger>
+  <level>INFO</level>
+  <class>com.rushteamc.lib.test.BasicTest$handler</class>
+  <method>onInstanceOfAnotherEvent</method>
+  <thread>21</thread>
+  <message>Handler 3 got instance of myEvent "myEventExtended event on eventbus 1" from group null</message>
+</record>
+</log>

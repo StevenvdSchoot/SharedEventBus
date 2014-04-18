@@ -9,5 +9,16 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Subscribe
 {
-	;
+	public enum Priority
+	{
+		HIGHEST,
+		HIGH,
+		MEDIUM,
+		LOW,
+		LOWEST,
+		MONITORING
+	}
+	
+	Priority priority() default Priority.MEDIUM;
+	boolean instanceOf() default false;
 }

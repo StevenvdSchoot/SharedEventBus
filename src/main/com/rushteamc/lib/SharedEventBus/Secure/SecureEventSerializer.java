@@ -3,9 +3,12 @@ package com.rushteamc.lib.SharedEventBus.Secure;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
 import java.io.Serializable;
+import java.io.StreamCorruptedException;
 import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -95,7 +98,7 @@ public class SecureEventSerializer
 		return encrypt(group, key, output);
 	}
 
-	public SecureEvent deserialize(SecureEventMessage secureEventMessage) throws IllegalArgumentException, ClassCastException, IOException, ClassNotFoundException
+	public SecureEvent deserialize(SecureEventMessage secureEventMessage) throws IllegalArgumentException, ClassCastException, IOException, ClassNotFoundException, InvalidClassException, StreamCorruptedException, OptionalDataException
 	{
 		SecretKey key = keyRing.get(secureEventMessage.getGroup());
 		if(key == null)
@@ -209,7 +212,12 @@ public class SecureEventSerializer
 		SecretKey tmp = factory.generateSecret(spec);
 		SecretKey secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
 		
-		keyRing.put(group, secretKey);
+		addGroup(group, secretKey);
+	}
+	
+	public void addGroup(String group, SecretKey groupKey)
+	{
+		keyRing.put(group, groupKey);
 	}
 	
 	public boolean removeGroup(String group)
@@ -220,5 +228,10 @@ public class SecureEventSerializer
 	public Set<String> getGroups()
 	{
 		return keyRing.keySet();
+	}
+
+	public SecretKey getGroupKey(String groupname)
+	{
+		return keyRing.get(groupname);
 	}
 }

@@ -1,12 +1,19 @@
 package com.rushteamc.lib.SharedEventBus;
 
 import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.OptionalDataException;
 import java.io.Serializable;
+import java.io.StreamCorruptedException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -16,6 +23,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.crypto.SecretKey;
 
 import com.rushteamc.lib.SharedEventBus.Secure.SecureEvent;
 import com.rushteamc.lib.SharedEventBus.Secure.SecureEventMessage;
@@ -40,6 +49,7 @@ public class SharedEventBus
 	
 	public enum Protocol
 	{
+		@Deprecated
 		UDP,
 		TCP
 	}
@@ -49,12 +59,7 @@ public class SharedEventBus
 		this(new InetSocketAddress[0]);
 	}
 	
-	public SharedEventBus(Set<InetSocketAddress> adressList)
-	{
-		this(adressList.toArray(new InetSocketAddress[adressList.size()]));
-	}
-	
-	public SharedEventBus(List<InetSocketAddress> adressList)
+	public SharedEventBus(Collection<InetSocketAddress> adressList)
 	{
 		this(adressList.toArray(new InetSocketAddress[adressList.size()]));
 	}
@@ -64,19 +69,11 @@ public class SharedEventBus
 		this(adressList, Protocol.TCP);
 	}
 	
-	@Deprecated
-	public SharedEventBus(Set<InetSocketAddress> adressList, Protocol protocol)
+	public SharedEventBus(Collection<InetSocketAddress> adressList, Protocol protocol)
 	{
 		this(adressList.toArray(new InetSocketAddress[adressList.size()]), protocol);
 	}
 
-	@Deprecated
-	public SharedEventBus(List<InetSocketAddress> adressList, Protocol protocol)
-	{
-		this(adressList.toArray(new InetSocketAddress[adressList.size()]), protocol);
-	}
-
-	@Deprecated
 	public SharedEventBus(InetSocketAddress[] addressList, Protocol protocol)
 	{
 		if(addressList == null)
@@ -107,7 +104,16 @@ public class SharedEventBus
 					e.printStackTrace();
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
+				} catch (InvalidClassException e) {
+					e.printStackTrace();
+				} catch (StreamCorruptedException e) {
+					e.printStackTrace();
+				} catch (OptionalDataException e) {
+					e.printStackTrace();
 				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Throwable e) { // Read object is known to be able to throw exceptions that are not documented!
+					System.err.print("Cought undocumented exception:");
 					e.printStackTrace();
 				}
 			}
@@ -143,7 +149,6 @@ public class SharedEventBus
 						try {
 							sleep(100);
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -272,18 +277,105 @@ public class SharedEventBus
 		}
 	}
 	
+	public void removeHandler(Object handler)
+	{
+		for( Entry<Class<?>, List<HandlerCallList>> entry : eventHandlerMethods.entrySet() )
+		{
+			for( HandlerCallList handlerCallList : entry.getValue() )
+			{
+				if(handlerCallList.obj.equals(handler))
+					entry.getValue().remove(handlerCallList);
+			}
+		}
+	}
+	
+	private void handleEventInterfaces(final Collection<MethodCaller> collection, int level, String group, Serializable event, Class<?> cls)
+	{
+		try {
+			Class<?>[] types = cls.getInterfaces();
+			
+			for( Class<?> type : types )
+			{
+				List<HandlerCallList> list = eventHandlerMethods.get(type);
+
+				if(list != null)
+				{
+					for( HandlerCallList handlerCallList : list )
+					{
+						handlerCallList.callInstanceOf(collection, level, group, event, type);
+					}
+				}
+
+				handleEventInterfaces(collection, level + 1, group, event, type);
+			}
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void handleEventInstanceOf(final Collection<MethodCaller> collection, int level, String group, Serializable event, Class<?> cls)
+	{
+		List<HandlerCallList> list = eventHandlerMethods.get(cls);
+
+		if(list != null)
+		{
+			for( HandlerCallList handlerCallList : list )
+			{
+				handlerCallList.callInstanceOf(collection, level, group, event, cls);
+			}
+		}
+		
+		Class<?> superClass = cls.getSuperclass();
+		if(superClass != null)
+		{
+			if(!(superClass instanceof Serializable))
+			{
+				handleEventInstanceOf(collection, level + 1, group, event, superClass);
+			}
+		}
+		
+		handleEventInterfaces(collection, level + 1, group, event, cls);
+	}
+	
 	private void handleEvent(String group, Serializable event)
 	{
+		List<MethodCaller> collection = new ArrayList<MethodCaller>();
+		
 		Class<? extends Serializable> cls = event.getClass();
+		
+		Class<?> superClass = cls.getSuperclass();
+		if(superClass != null)
+			handleEventInstanceOf(collection, 1, group, event, superClass);
+		
+		handleEventInterfaces(collection, 1, group, event, cls);
+
 		List<HandlerCallList> list = eventHandlerMethods.get(cls);
-		
-		if(list == null)
-			return;
-		
-		for( HandlerCallList handlerCallList : list )
+
+		if(list != null)
 		{
-			handlerCallList.call(group, event);
+			for( HandlerCallList handlerCallList : list )
+			{
+				handlerCallList.call(collection, group, event);
+			}
 		}
+		
+		Collections.sort(collection, new CustomComparator());
+		
+		for( MethodCaller item : collection )
+			item.call(group, event);
+	}
+	
+	public class CustomComparator implements Comparator<MethodCaller> {
+	    @Override
+	    public int compare(MethodCaller o1, MethodCaller o2)
+	    {
+	    	int comp = o1.getPriority().compareTo(o2.getPriority());
+	    	
+	    	if (comp == 0)
+	    		return ((Integer)o1.getLevel()).compareTo(o2.getLevel());
+	    	
+	    	return comp;
+	    }
 	}
 	
 	public InetSocketAddress[] getAddressList() {
@@ -324,27 +416,97 @@ public class SharedEventBus
 			this.methods = methods;
 		}
 		
-		public void call(String group, Object event)
+		public void call(final Collection<MethodCaller> collection, String group, Object event)
 		{
 			for( Method method : methods )
 			{
-				try {
-					if(method.getParameterTypes().length == 1)
-						method.invoke(obj, event);
-					else
-						method.invoke(obj, group, event);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
-				} catch (Throwable e) {
-					e.printStackTrace();
+				collection.add(new MethodCaller(obj, method, 0, method.getAnnotation(Subscribe.class).priority(), event.getClass()));
+			}
+		}
+		
+		public void callInstanceOf(final Collection<MethodCaller> collection, int level, String group, Object event, Class<?> type)
+		{
+			for( Method method : methods )
+			{
+				if( method.getAnnotation(Subscribe.class).instanceOf() )
+				{
+					collection.add(new MethodCaller(obj, method, level, method.getAnnotation(Subscribe.class).priority(), type));
 				}
 			}
 		}
 	}
 	
-	public void addGroup(String group, String password)
+	class MethodCaller
 	{
-		addGroup(group, password.toCharArray());
+		private final Object obj;
+		private final Method method;
+		private final int level;
+		private final Subscribe.Priority priority;
+		private final Class<?> type;
+		
+		public MethodCaller(Object obj, Method method, int level, Subscribe.Priority priority, Class<?> type)
+		{
+			this.obj = obj;
+			this.method = method;
+			this.level = level;
+			this.priority = priority;
+			this.type = type;
+		}
+
+		/**
+		 * @return the obj
+		 */
+		public Object getObj() {
+			return obj;
+		}
+
+		/**
+		 * @return the method
+		 */
+		public Method getMethod() {
+			return method;
+		}
+
+		/**
+		 * @return the level
+		 */
+		public int getLevel() {
+			return level;
+		}
+
+		/**
+		 * @return the priority
+		 */
+		public Subscribe.Priority getPriority() {
+			return priority;
+		}
+		
+		/**
+		 * @return the type
+		 */
+		public Class<?> getType()
+		{
+			return type;
+		}
+		
+		public void call(String group, Serializable event)
+		{
+			try {
+				if(method.getParameterTypes().length == 1)
+					method.invoke(obj, type.cast(event));
+				else
+					method.invoke(obj, group, type.cast(event));
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public boolean addGroup(String group, String password)
+	{
+		return addGroup(group, password.toCharArray());
 	}
 	
 	public boolean addGroup(String group, char[] password)
@@ -360,6 +522,12 @@ public class SharedEventBus
 		return false;
 	}
 	
+	public boolean addGroup(String group, SecretKey groupKey)
+	{
+		secureEventSerializer.addGroup(group, groupKey);
+		return true;
+	}
+	
 	public boolean removeGroup(String group)
 	{
 		return secureEventSerializer.removeGroup(group);
@@ -368,6 +536,11 @@ public class SharedEventBus
 	public Set<String> getGroups()
 	{
 		return secureEventSerializer.getGroups();
+	}
+
+	public SecretKey getGroupKey(String groupname)
+	{
+		return secureEventSerializer.getGroupKey(groupname);
 	}
 	
 }
